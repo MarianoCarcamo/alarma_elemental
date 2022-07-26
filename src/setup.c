@@ -20,9 +20,16 @@ inline static void configuraPin13PuertoC_SalidaPushPull_2MHz_inicial_1(void)
     GPIOC->CRH = (GPIOC->CRH & ~(GPIO_CRH_MODE13|GPIO_CRH_CNF13))|(GPIO_CRH_MODE13_1);
 }
 
+inline static void configuraPin14PuertoC_PullDown(void)
+{
+    GPIOC->ODR = (GPIOC->ODR & ~(GPIO_ODR_ODR14));
+    GPIOC->CRH = (GPIOC->CRH & ~(GPIO_CRH_MODE14|GPIO_CRH_CNF14))|(GPIO_CRH_CNF14_1);
+}
+
 void setup(void)
 {
     conectaRelojPuertoC();
     configuraPin13PuertoC_SalidaPushPull_2MHz_inicial_1();
+    configuraPin14PuertoC_PullDown();
     TimerSysTick_init();
 }

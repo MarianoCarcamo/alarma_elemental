@@ -10,6 +10,7 @@
 #include <timer_systick.h>
 
 typedef enum EstadoLed{ENCENDIDO,APAGADO}EstadoLed;
+typedef enum EstadoBoton{ON,OFF}EstadoBoton;
 
 inline static void estadoLed(EstadoLed estado)
 {
@@ -19,7 +20,13 @@ inline static void estadoLed(EstadoLed estado)
         GPIOC->BSRR |= GPIO_BSRR_BS13;
 }
 
-
+inline static EstadoBoton estadoBoton(void)
+{
+    if(GPIOC->IDR & GPIO_ODR_ODR14_Msk)
+        return ON;
+    else
+        return OFF;
+}
 
 inline static EstadoLed nuevoEstado(EstadoLed estadoActual)
 {
@@ -33,8 +40,18 @@ inline static EstadoLed nuevoEstado(EstadoLed estadoActual)
 
 void loop(void)
 {
-    static EstadoLed estado = ENCENDIDO;
-    estadoLed(estado);
-    TimerSysTick_esperaMilisegundos(500);
-    estado = nuevoEstado(estado);
+    static EstadoLed led = APAGADO;
+    static EstadoBoton boton = OFF; 
+    boton = estadoBoton();
+    if(boton == ON)
+    {
+        estadoLed(led);
+        TimerSysTick_esperaMilisegundos(200);
+        led = nuevoEstado(led);
+    }
+    else
+    {
+        led = APAGADO;
+        estadoLed(led);
+    }
 }
